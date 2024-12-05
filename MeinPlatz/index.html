@@ -223,33 +223,49 @@
         function refreshSubContent(button, contentDiv) {
             const iframeUrl = button.getAttribute("data-iframe-url");
 
-            // Clear existing content
-            content.innerHTML = "";
+            // Check if the iframe is already present
+            const existingIframe = contentDiv.querySelector("iframe");
 
-            // Regenerate iframe
-            if (iframeUrl) {
-                const iframe = document.createElement("iframe");
-                iframe.src = iframeUrl;
-                iframe.width = "100%";
-                iframe.height = "300px";
-                iframe.style.border = "none";
+            if (existingIframe) {
+                // If the iframe exists and it's URL matches, do nothing
+                if (existingIframe.src === iframeUrl) {
+                    console.log("Iframe already loaded. No need to refresh.");
+                    return;
+                }
 
-                // Attach error handler
-                iframe.onerror = () => {
-                    console.error(`Error loading iframe for: ${title}`);
-                    button.disabled = true;
-                    button.style.backgroundColor = "#ccc"; // Indicate the button is disabled
-
-                    const errorMessage = document.createElement("p");
-                    errorMessage.textContent = "Fehler beim Laden des Inhalts. Bitte versuche es später nochmal.";
-                    errorMessage.style.color = "red";
-                    contentDiv.appendChild(errorMessage);
-                };
-            
-                contentDiv.appendChild(iframe);                
-            } else {
-                console.error("Die URL für diesen Untermenü IFrame wurde nicht gefunden.")
+                // If the iframe URL doesn't match, update it
+                existingIframe.src = iframeUrl;
+                console.log("Iframe URL updated.");
+                return;
             }
+
+            // Create a new iframe if none exists
+            const iframe = document.createElement("iframe");
+            iframe.src = iframeUrl;
+            iframe.width = "100%";
+            iframe.height = "300px";
+            iframe.style.border = "none";
+
+            // Attach error handler for the iframe
+            iframe.onerror = () => {
+                console.error(`Error loading iframe: ${iframeUrl}`);
+                button.disabled = true;
+                button.style.backgroundColor = "#ccc"; // Indicate the button is disabled
+
+                // Show error message
+                const errorMessage = document.createElement("p");
+                errorMessage.textContent = "Fehler beim Laden des Inhalts. Bitte versuche es später nochmal.";
+                errorMessage.style.color = "red";
+
+                // Clear existing content and show error
+                contentDiv.innerHTML = "";
+                contentDiv.appendChild(errorMessage);
+            };
+
+            // Append the iframe to the content div
+            contentDiv.innerHTML = ""; // Clear previous content before adding the iframe
+            contentDiv.appendChild(iframe);
+            
         }
 
         function generateDetailedContent(category) {
