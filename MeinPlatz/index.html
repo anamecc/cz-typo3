@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .collapsible {
+            background-color: #7b98a1;
+            color: white;
+            cursor: pointer;
+            padding: 12px 15px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 14px;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+
+        .collapsible:hover {
+            background-color: #5a7684;
+        }
+
+        .collapsible::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid white;
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .collapsible.active::after {
+            transform: rotate(180deg); /* Flip the arrow upwards */
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid white; /* Arrow pointing up */ 
+
+        }
+
+        .collapsible-main {
+            background-color: #5a7684;
+            color: white;
+            cursor: pointer;
+            padding: 15px 20px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .collapsible-main:hover {
+            background-color: #44606d;
+        }
+
+        .collapsible-main::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid white; /* Arrow pointing down */
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .collapsible-main.active::after {
+            transform: rotate(180deg); /* Arrow pointing up */
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid white; 
+        }
+
+        .content-intern, .content-extern, .content-wohnen {
+            padding: 0 20px;
+            display: none;
+            margin-top: 10px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .content {
+            padding: 15px;
+            display: none;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        /* Add responsiveness */
+        @media (max-width: 768px) {
+            .collapsible-main, .collapsible {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            iframe {
+                height: 200px;
+            }
+
+            .content {
+                padding: 10px;
+            }
+        }
+
+    </style>
+    <title>Mein Platz</title>
+</head>
+<body>
+
+    <h1>Freie Plätze</h1>
+
+    <button type="button" class="collapsible-main">Arbeitsplätze</button>
+    <div id="content-intern" class="content-intern"></div>
+
+    <button type="button" class="collapsible-main">Externe Arbeitsplätze</button>
+    <div id="content-extern" class="content-extern"></div>
+
+    <button type="button" class="collapsible-main">Wohnen</button>
+    <div id="content-wohnen" class="content-wohnen"></div>
+
+    <script>
+
+        const contentMap = new Map();
+
+        contentMap.set("titel-intern", ["CZ-Allroundservice", "CZ-Gastro", "CZ-Werkraum", "CZ-Gartenbau", "CZ-Kreativatelier", "CZ-Office", "Empfang Rautistrasse", "Hauswirtschaft Zwischenbächen"]);
+        contentMap.set("iframe-intern", ["cz-hauswartung", "cz-gastro", "cz-werkraum", "cz-gartenbau", "cz-atelier", "cz-office", "empfang-rautistrasse", "hauswirtschaft-zwischenbaechen"]);
+        contentMap.set("id-intern", ["248", "246", "169", "168", "251", "166", "2111", "1430"]);
+
+        contentMap.set("titel-extern", ["Externer Arbeitsplatz im Alters- und Pflegezentrum (über CZ-Integration)", "Externer Arbeitsplatz in der KITA Mittagsküche / Reinigung", "Externer Arbeitsplatz im Bereich Entwässerungstechnologie (über CZ-Integration)", "Externer Arbeitsplatz in einem Versandunternehmen", "Externer Arbeitsplatz in einem Architekturbüro", "Externer Arbeitsplatz im Hort (über CZ-Integration)", "Externer Arbeitsplatz einem Lebensmittel-Großhandel", "Externer Arbeitsplatz IT und Administration"]);
+        contentMap.set("iframe-extern", ["externer-arbeitsplatz-im-alters-und-pflegezentrum-ueber-cz-integration", "cz-integration", "externer-arbeitsplatz-im-bereich-entwaesserungstechnologie-ueber-cz-integration", "externer-arbeitsplatz-einem-versandunternehmen", "externer-arbeitsplatz-einem-architekturbuero", "externer-arbeitsplatz-im-hort", "externer-arbeitsplatz-einem-lebensmittel-grosshandel", "externer-arbeitsplatz-im-bereich-lebensmittelvertrieb"]);
+        contentMap.set("id-extern", ["1865", "250", "1493", "2180", "2181", "1848", "1895", "2033"]);
+
+        contentMap.set("titel-wohnen", ["Betreutes Wohnen Loogarten", "Kollektives Wohnen Stampfenbrunnen", "Wohnheim Zwischenbächen"]);
+        contentMap.set("iframe-wohnen", ["betreutes-wohnen-loogarten", "aussenwohnhaus-stampfenbrunnen", "wohngemeinschaft-zwischenbachen"]);
+        contentMap.set("id-wohnen", ["266", "267", "270"]);
+
+        function attachMainCollapsibleListeners() {
+            const mainCollapsibles = document.getElementsByClassName("collapsible-main");
+
+            for (let i = 0; i < mainCollapsibles.length; i++) {
+                mainCollapsibles[i].addEventListener("click", function () {
+                    const content = this.nextElementSibling;
+
+                    // Close all content sections
+                    const allContents = document.getElementsByClassName("content-intern");
+                    const allContentsExtern = document.getElementsByClassName("content-extern");
+                    const allContentsWohnen = document.getElementsByClassName("content-wohnen");
+
+                    // Iterate through all the collapsibles and close them
+                    [allContents, allContentsExtern, allContentsWohnen].forEach(contents => { 
+                        for (let j = 0; j < allContents.length; j++) {
+                            if (contents[j] !== content) {
+                                contents[j].style.display = "none"; // Close all content except the one clicked
+                                const correspondingButton = allContents[j].previousElementSibling;
+                                if (correspondingButton) {
+                                    correspondingButton.classList.remove("active"); // Remove 'active' class from other buttons 
+                                }
+                            }
+                        }
+                });
+                    // Now toggle the clicked collapsible section
+                    this.classList.toggle("active");
+                    if (content.style.display === "block") {
+                        // Collapse the main section
+                        content.style.display = "none";
+                    } else {
+                        // Expand the main section
+                        content.style.display = "block";
+
+                        // Generate content only if it hasn't been loaded yet
+                        if (!content.hasChildNodes()) {
+                            const category = content.id.split("-")[1];
+                            generateDetailedContent(category);
+                        }
+                    }
+                });
+            }
+        }
+
+        function attachCollapsibleEventListeners(container) {
+            const collapsibles = container.getElementsByClassName("collapsible");
+
+            for (let i = 0; i < collapsibles.length; i++) {
+                collapsibles[i].addEventListener("click", function () {
+                    const content = this.nextElementSibling;
+
+                    // Close all other sub-collapsible contents in the same container
+                    const allSubContents = container.getElementsByClassName("content");
+                    for (let j = 0; j < allSubContents.length; j++) {
+                        if (allSubContents[j] !== content) {
+                            allSubContents[j].style.display = "none"; // Collapse the other sub-collapsible sections
+                            const correspondingButton = allSubContents[j].previousElementSibling;
+                            if (correspondingButton) {
+                                correspondingButton.classList.remove("active"); // Remove 'active' class from other buttons
+                            }
+                        }
+                    }
+
+                    // Toggle the display of the detailed section
+                    if (content.style.display === "block") {
+                        // Collapse the main section
+                        content.style.display = "none";
+                        this.classList.remove("active");
+                    } else {
+                        // Expand the main section
+                        content.style.display = "block";
+                        this.classList.add("active");
+
+                        // Refresh the content
+                        refreshSubContent(this, content);
+                    }
+                });
+            }
+        }
+
+        function refreshSubContent(button, contentDiv) {
+            const iframeUrl = button.getAttribute("data-iframe-url");
+
+            // Clear existing content
+            content.innerHTML = "";
+
+            // Regenerate iframe
+            if (iframeUrl) {
+                const iframe = document.createElement("iframe");
+                iframe.src = iframeUrl;
+                iframe.width = "100%";
+                iframe.height = "300px";
+                iframe.style.border = "none";
+
+                // Attach error handler
+                iframe.onerror = () => {
+                    console.error(`Fehler beim Laden von iframe: ${iframeUrl}`);
+                    button.disabled = true;
+                    button.style.backgroundColor = "#ccc"; // Indicate the button is disabled
+                };
+            
+                contentDiv.appendChild(iframe);                
+            } else {
+                console.error("Die URL für diesen Untermenü IFrame wurde nicht gefunden.")
+            }
+        }
+
+        function generateDetailedContent(category) {
+            const titles = contentMap.get(`titel-${category}`);
+            const iframes = contentMap.get(`iframe-${category}`);
+            const ids = contentMap.get(`id-${category}`);
+            const container = document.getElementById(`content-${category}`);
+
+            if (!titles || !iframes || !ids) {
+                console.error(`Content not found for category: ${category}`);
+                return;
+            }
+
+            titles.forEach((title, index) => {
+                const button = document.createElement('button');
+                button.className = 'collapsible';
+                button.textContent = title;
+                button.setAttribute("data-iframe-url", `https://meinplatz.ch/de/angebote/${ids[index]}/${iframes[index]}/iframe`)
+
+                const contentDiv = document.createElement("div");
+                contentDiv.className = "content";
+                const iframe = document.createElement("iframe");
+                iframe.src = `https://meinplatz.ch/de/angebote/${ids[index]}/${iframes[index]}/iframe`;
+                iframe.width = "100%";
+                iframe.height = "300px";
+                iframe.style.border = "none";
+
+                // Attach iframe error handler
+                iframe.onerror = () => {
+                    console.error(`Error loading iframe for: ${title}`);
+                    // Disable the button and add a tooltip/message
+                    button.disabled = true;
+                    button.style.backgroundColor = "#ccc"; // Visual feedback for disabled button
+
+                    // Create and display an error message
+                    const errorMessage = document.createElement("p");
+                    errorMessage.textContent = "Fehler beim Laden des Inhalts. Bitte versuche es später nochmal."
+                    errorMessage.style.color = "red";
+                    contentDiv.appendchild(errorMessage);
+                }
+
+                contentDiv.appendChild(iframe);
+
+                container.appendChild(button);
+                container.appendChild(contentDiv);
+                
+
+
+            });
+
+            attachCollapsibleEventListeners(container);
+        }
+
+        attachMainCollapsibleListeners();
+    </script>
+</body>
+</html>
