@@ -294,11 +294,20 @@
 
                 const contentDiv = document.createElement("div");
                 contentDiv.className = "content";
+                
                 const iframe = document.createElement("iframe");
                 iframe.src = `https://meinplatz.ch/de/angebote/${ids[index]}/${iframes[index]}/iframe`;
                 iframe.width = "100%";
                 iframe.height = "300px";
                 iframe.style.border = "none";
+
+                // Create and set up the redirect button
+                const buttonTo = document.createElement('button');
+                buttonTo.className = 'redirect';
+                buttonTo.textContent = 'Zur Webseite';
+                buttonTo.addEventListener('click', () => {
+                    window.open(`https://meinplatz.ch/de/angebote/22/${iframes[index]}`, '_blank');
+                });
 
                 // Attach iframe error handler
                 iframe.onerror = () => {
@@ -315,6 +324,7 @@
                 }
 
                 contentDiv.appendChild(iframe);
+                contentDiv.appendChild(buttonTo);
 
                 container.appendChild(button);
                 container.appendChild(contentDiv);
