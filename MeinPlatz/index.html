@@ -155,7 +155,7 @@
 
                     // Iterate through all the collapsibles and close them
                     [allContents, allContentsExtern, allContentsWohnen].forEach(contents => { 
-                        for (let j = 0; j < allContents.length; j++) {
+                        for (let j = 0; j < contents.length; j++) {
                             if (contents[j] !== content) {
                                 contents[j].style.display = "none"; // Close all content except the one clicked
                                 const correspondingButton = allContents[j].previousElementSibling;
@@ -164,15 +164,23 @@
                                 }
                             }
                         }
-                });
-                    // Now toggle the clicked collapsible section
-                    this.classList.toggle("active");
-                    if (content.style.display === "block") {
+                    });
+
+                    //Toggle the clicked collapsible section
+                    const isOpen = content.style.display === "block";
+
+                    // Collapse all sections (removes 'active' from all buttons)
+                    for (let k = 0; k < mainCollapsibles.length; k++) {
+                        mainCollapsibles[k].classList.remove("active");
+                    }
+
+                    if (isOpen) {
                         // Collapse the main section
                         content.style.display = "none";
                     } else {
                         // Expand the main section
                         content.style.display = "block";
+                        this.classList.add("active");
 
                         // Generate content only if it hasn't been loaded yet
                         if (!content.hasChildNodes()) {
@@ -321,8 +329,6 @@
 
                 container.appendChild(button);
                 container.appendChild(contentDiv);
-                
-
 
             });
 
