@@ -18,107 +18,80 @@
             margin: 20px 0;
         }
 
-        .collapsible {
-            background-color: #7b98a1;
-            color: white;
+        button {
+            font-family: inherit;
             cursor: pointer;
-            padding: 12px 15px;
-            width: 100%;
-            border: none;
-            text-align: left;
-            outline: none;
-            font-size: 14px;
-            border-radius: 5px;
-            margin-top: 10px;
-            transition: background-color 0.3s ease;
-            position: relative;
         }
 
-        .collapsible:hover {
-            background-color: #5a7684;
-        }
-
-        .collapsible::after {
-            content: '';
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 5px solid white;
-            position: absolute;
-            right: 20px;
-            top: 15px;
-            transition: transform 0.3s ease;
-        }
-
-        .collapsible.active::after {
-            transform: rotate(180deg); /* Flip the arrow upwards */
-            border-top: 5px solid transparent;
-            border-bottom: 5px solid white; /* Arrow pointing up */ 
-
-        }
-
-        .collapsible-main {
-            background-color: #5a7684;
-            color: white;
+        .collapsible, .collapsible-main {
+            background-color: #4e7a8e;
+            color: #fff;
             cursor: pointer;
             padding: 15px 20px;
             width: 100%;
             border: none;
             text-align: left;
+            outline: none;
             font-size: 16px;
             border-radius: 5px;
-            margin-bottom: 10px;
+            margin: 10px 0;
             position: relative;
             transition: background-color 0.3s ease;
         }
 
-        .collapsible-main:hover {
-            background-color: #44606d;
+        .collapsible:hover, .collapsible-main:hover {
+            background-color: #3a6173;
         }
 
-        .collapsible-main::after {
+        .collapsible::after, .collapsible-main::after {
             content: '';
             width: 0;
             height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 5px solid white; /* Arrow pointing down */
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 7px solid #fff;
             position: absolute;
             right: 20px;
-            top: 15px;
+            top: 50%;
+            transform: translateY(-50%);
             transition: transform 0.3s ease;
         }
 
-        .collapsible-main.active::after {
-            transform: rotate(180deg); /* Arrow pointing up */
-            border-top: 5px solid transparent;
-            border-bottom: 5px solid white; 
+        .collapsible.active::after, .collapsible-main.active::after {
+            transform: translateY(-50%) rotate(180deg);
         }
 
-        .content-intern, .content-extern, .content-wohnen {
-            padding: 0 20px;
+        .content-intern, .content-extern, .content-wohnen, .content {
             display: none;
-            margin-top: 10px;
-            background-color: #ffffff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .content {
             padding: 15px;
-            display: none;
-            background-color: #ffffff;
+            margin-top: 10px;
+            background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 5px;
+        }
+
+        .redirect {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 14px;
+            border-radius: 5px;
             margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .redirect:hover {
+            background-color: #388e3c;
         }
 
         iframe {
             width: 100%;
-            height: 500px;
+            height: 300px;
             border: none;
             border-radius: 5px;
+            margin-top: 10px;
         }
 
         /* Add responsiveness */
@@ -156,7 +129,6 @@
     <script>
 
         const contentMap = new Map();
-
         contentMap.set("titel-intern", ["CZ-Allroundservice", "CZ-Gastro", "CZ-Werkraum", "CZ-Gartenbau", "CZ-Kreativatelier", "CZ-Office", "Empfang Rautistrasse", "Hauswirtschaft Zwischenbächen"]);
         contentMap.set("iframe-intern", ["cz-hauswartung", "cz-gastro", "cz-werkraum", "cz-gartenbau", "cz-atelier", "cz-office", "empfang-rautistrasse", "hauswirtschaft-zwischenbaechen"]);
         contentMap.set("id-intern", ["248", "246", "169", "168", "251", "166", "2111", "1430"]);
@@ -264,9 +236,14 @@
 
                 // Attach error handler
                 iframe.onerror = () => {
-                    console.error(`Fehler beim Laden von iframe: ${iframeUrl}`);
+                    console.error(`Error loading iframe for: ${title}`);
                     button.disabled = true;
                     button.style.backgroundColor = "#ccc"; // Indicate the button is disabled
+
+                    const errorMessage = document.createElement("p");
+                    errorMessage.textContent = "Fehler beim Laden des Inhalts. Bitte versuche es später nochmal.";
+                    errorMessage.style.color = "red";
+                    contentDiv.appendChild(errorMessage);
                 };
             
                 contentDiv.appendChild(iframe);                
