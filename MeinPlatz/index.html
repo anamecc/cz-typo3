@@ -34,7 +34,7 @@
             outline: none;
             font-size: 16px;
             border-radius: 5px;
-            margin: 10px 0;
+            margin: 5px 0;
             position: relative;
             transition: background-color 0.3s ease;
         }
@@ -70,6 +70,19 @@
             border-radius: 5px;
         }
 
+        .content{
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 15px;
+            margin-top: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: none;
+
+        }
+
         .redirect {
             background-color: #4caf50;
             color: white;
@@ -77,7 +90,7 @@
             padding: 10px 15px;
             font-size: 14px;
             border-radius: 5px;
-            margin-top: 10px;
+            margin-left: 90%;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
@@ -148,44 +161,31 @@
                 mainCollapsibles[i].addEventListener("click", function () {
                     const content = this.nextElementSibling;
 
-                    // Close all content sections
-                    const allContents = document.getElementsByClassName("content-intern");
-                    const allContentsExtern = document.getElementsByClassName("content-extern");
-                    const allContentsWohnen = document.getElementsByClassName("content-wohnen");
-
-                    // Iterate through all the collapsibles and close them
-                    [allContents, allContentsExtern, allContentsWohnen].forEach(contents => { 
-                        for (let j = 0; j < contents.length; j++) {
-                            if (contents[j] !== content) {
-                                contents[j].style.display = "none"; // Close all content except the one clicked
-                                const correspondingButton = allContents[j].previousElementSibling;
-                                if (correspondingButton) {
-                                    correspondingButton.classList.remove("active"); // Remove 'active' class from other buttons 
-                                }
+                    // Close all collapsibles in the same category
+                    const allContents = document.querySelectorAll(".content-intern, .content-extern, .content-wohnen");
+                    allContents.forEach((otherContent) => {
+                        if (otherContent !== content) {
+                            otherContent.style.display = "none"; // Collapse other sections
+                            const correspondingButton = otherContent.previousElementSibling;
+                            if (correspondingButton) {
+                                correspondingButton.classList.remove("active");
                             }
                         }
                     });
 
-                    //Toggle the clicked collapsible section
+                    // Toggle current collapsible
                     const isOpen = content.style.display === "block";
-
-                    // Collapse all sections (removes 'active' from all buttons)
-                    for (let k = 0; k < mainCollapsibles.length; k++) {
-                        mainCollapsibles[k].classList.remove("active");
-                    }
-
                     if (isOpen) {
-                        // Collapse the main section
                         content.style.display = "none";
+                        this.classList.remove("active");
                     } else {
-                        // Expand the main section
                         content.style.display = "block";
                         this.classList.add("active");
 
-                        // Generate content only if it hasn't been loaded yet
+                        // Generate content if not loaded
                         if (!content.hasChildNodes()) {
-                            const category = content.id.split("-")[1];
-                            generateDetailedContent(category);
+                            const categoryKey = content.id.split("-")[1];
+                            generateDetailedContent(categoryKey);
                         }
                     }
                 });
